@@ -23,6 +23,10 @@ int main (void) {
         printf("Player%d's turn\nEnter Row Column: ", player);
         //printf("pass1\n");
         scanf("%d%d", &row, &column);
+        if (!is_bound(row, column, size)) {
+            printf("Invalid Move. Try Again.\n");
+            continue;
+        }
         //debug
         //printf("Row: %d, Column: %d\n", row, column);
         //printf("pass2\n");
@@ -34,6 +38,7 @@ int main (void) {
         //printf("pass5\n");
         //debug
         //printf("Result: %d\n", result);
+        player = player ^ 0b11; //Switch Player
     }
 
     if(result != -1){
@@ -52,7 +57,7 @@ void print_table (int size, int table[size][size]) {
                     printf("+");
                     continue;
                 }
-                printf("-");
+                printf("---");
                 continue;
             }
             if (j % 2 == 1) {
@@ -60,13 +65,17 @@ void print_table (int size, int table[size][size]) {
             } else {
                 switch (table[i/2][j/2])
                 {
+                case -1:
+                    printf("   ");
+                    break;
                 case 1:
-                    printf("X");
+                    printf(" X ");
                     break;
                 case 2:
-                    printf("O");
+                    printf(" O ");
+                    break;
                 default:
-                    printf("%d", table[i/2][j/2]);
+                    printf(" %d ", table[i/2][j/2]);
                     break;
                 }
             }
