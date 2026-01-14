@@ -24,7 +24,7 @@ int main (void) {
         //printf("pass1\n");
         scanf("%d%d", &row, &column);
         //debug
-        printf("Row: %d, Column: %d\n", row, column);
+        //printf("Row: %d, Column: %d\n", row, column);
         //printf("pass2\n");
         play(size, table, player, row, column);
         //printf("pass3\n");
@@ -80,10 +80,13 @@ char check_con(int size, int table[size][size]) {
     bool one_found = 0;
     for (int i = 0; i < size; i++) { //Check every entries
         for (int j = 0; j < size; j++) {
-            //debug
-            //printf("Checking %d,%d\n", i, j);
-            if (table[i][j] == -1) one_found = 1;
+            //printf("Checking %d,%d\n", i, j); //debug
+            if (table[i][j] == -1) {
+                one_found = 1;
+                continue;
+            }
             result = check_con_rc(size, table, i, j);
+            //printf("%d\n", (int)result); //debug
             if (result != 0) return result;
         }
     }
@@ -99,23 +102,24 @@ char check_con_rc(int size, int table[size][size], int row, int col) {
             if (i % 2 == 0) { //Verticle and Horizontal Check
                 //debug
                 //printf("Checking %d,%d for player %d\n", row, col, player);
-                int con = i % 4;
+                int con = (i / 2) % 4;
                 switch (con)
                 {
                 case 0:
-                    if(is_bound(row - j, col, size)) break;
+                    if(!is_bound(row - j, col, size)) break;
+                    //printf("test"); //debug
                     if(table[row - j][col] == player) count++; //Up
                     break;
                 case 1:
-                    if(is_bound(row, col + j, size)) break;
+                    if(!is_bound(row, col + j, size)) break;
                     if(table[row][col + j] == player) count++; //Right
                     break;
                 case 2:
-                    if(is_bound(row + j, col, size)) break;
+                    if(!is_bound(row + j, col, size)) break;
                     if(table[row + j][col] == player) count++; //Down
                     break;
                 case 3:
-                    if(is_bound(row, col - j, size)) break;
+                    if(!is_bound(row, col - j, size)) break;
                     if(table[row][col - j] == player) count++; //Left
                     break;
                 default:
@@ -124,33 +128,35 @@ char check_con_rc(int size, int table[size][size], int row, int col) {
                 }
                 if (count >= 3) return player;
             } else { //Diagonal Check
-                int con = i % 4;
+                int con = (i / 2) % 4;
                 switch (con)
                 {
-                case 0:
-                    if(is_bound(row - j, col + j, size)) break;
-                    if(table[row - j][col  + j] == player) count++; //Up
+                    case 0:
+                    if(!is_bound(row - j, col + j, size)) break;
+                    if(table[row - j][col  + j] == player) count++; //North-East
                     break;
-                case 1:
-                    if(is_bound(row + j, col + j, size)) break;
-                    if(table[row + j][col + j] == player) count++; //Right
+                    case 1:
+                    if(!is_bound(row + j, col + j, size)) break;
+                    if(table[row + j][col + j] == player) count++; //South-East
                     break;
-                case 2:
-                    if(is_bound(row + j, col - j, size)) break;
-                    if(table[row + j][col - j] == player) count++; //Down
+                    case 2:
+                    if(!is_bound(row + j, col - j, size)) break;
+                    if(table[row + j][col - j] == player) count++; //South-West
                     break;
-                case 3:
-                    if(is_bound(row - j, col - j, size)) break;
-                    if(table[row - j][col - j] == player) count++; //Left
+                    case 3:
+                    if(!is_bound(row - j, col - j, size)) break;
+                    if(table[row - j][col - j] == player) count++; //North-West
                     break;
                 default:
                     printf("Invalid case!!\n");
                     break;
                 }
-                if (count >= 3) return player;
+            if (count >= 3) return player;
             }
         }
+        //printf("Count: %d\n", count); //debug
     }
+    return 0;
 }
 
 bool is_bound (int row, int col, int n) {
