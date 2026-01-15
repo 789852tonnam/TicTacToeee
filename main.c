@@ -5,7 +5,7 @@ void print_table (int size, int table[size][size]);
 char check_con (int size, int table[size][size]);
 char check_con_rc (int size, int table[size][size], int row, int col);
 bool is_bound (int row, int col, int n);
-void play (int size, int table[size][size], int player, int row, int col);
+bool play (int size, int table[size][size], int player, int row, int col);
 
 
 int main (void) {
@@ -20,28 +20,23 @@ int main (void) {
     char result = 0;
 
     while (!result) {
+        print_table(size, table);
         printf("Player%d's turn\nEnter Row Column: ", player);
-        //printf("pass1\n");
         scanf("%d%d", &row, &column);
         if (!is_bound(row, column, size)) {
             printf("Invalid Move. Try Again.\n");
             continue;
         }
-        //debug
-        //printf("Row: %d, Column: %d\n", row, column);
-        //printf("pass2\n");
-        play(size, table, player, row, column);
-        //printf("pass3\n");
-        print_table(size, table);
-        //printf("pass4\n");
+        if (!play(size, table, player, row, column)) {
+            printf("Invalid Move. Try Again.\n");
+            continue;
+        }
         result = check_con(size, table);
-        //printf("pass5\n");
-        //debug
-        //printf("Result: %d\n", result);
         player = player ^ 0b11; //Switch Player
     }
 
     if(result != -1){
+        print_table(size, table);
         printf("Player%d Wins!!!", result);
     } else {
         printf("Ties.");
@@ -172,8 +167,12 @@ bool is_bound (int row, int col, int n) {
     return row < n && row >= 0 && col < n && col >= 0;
 }
 
-void play (int size, int table[size][size], int player, int row, int col) {
+bool play (int size, int table[size][size], int player, int row, int col) {
     //debug
-    printf("Playing %d at %d,%d\n", player, row, col);
+    //printf("Playing %d at %d,%d\n", player, row, col);
+    if (table[row][col] != -1) {
+        return false;
+    }
     table[row][col] = player;
+    return true;
 }
