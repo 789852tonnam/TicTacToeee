@@ -1,64 +1,80 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-void print_table (int size, int table[size][size]);
-char check_con (int size, int table[size][size]);
-char check_con_rc (int size, int table[size][size], int row, int col);
-bool is_bound (int row, int col, int n);
-bool play (int size, int table[size][size], int player, int row, int col);
+void print_table(int size, int table[size][size]);
+char check_con(int size, int table[size][size], int winSize);
+char check_con_rc(int size, int table[size][size], int row, int col, int winSize);
+bool is_bound(int row, int col, int n);
+bool play(int size, int table[size][size], int player, int row, int col);
 
-
-int main (void) {
-    int size = 3;
+int main(void)
+{
+    int size = 5, winSize = 4; // Initialize size and winSize
     int table[size][size];
-    for (int i = 0; i < size; i++) { //Reset table
-        for (int j = 0; j < size; j++) {
+    for (int i = 0; i < size; i++)
+    { // Reset table
+        for (int j = 0; j < size; j++)
+        {
             table[i][j] = -1;
         }
     }
-    int row, column ,player = 1;
-    char result = 0;
+    int row, column, player = 1; // Initailize player
+    char result = 0;             // 0 => no Winner, -1 => ties, 1 => 1 Wins, 2 => 2 Wins
 
-    while (!result) {
-        print_table(size, table);
-        printf("Player%d's turn\nEnter Row Column: ", player);
-        scanf("%d%d", &row, &column);
-        if (!is_bound(row, column, size)) {
-            printf("Invalid Move. Try Again.\n");
+    while (!result)
+    {                                                          // While no one wins
+        print_table(size, table);                              // Print table
+        printf("Player%d's turn\nEnter Row Column: ", player); // Tell Whose turn
+        scanf("%d%d", &row, &column);                          // Read input
+        if (!is_bound(row, column, size))
+        {                                         // Is not bound
+            printf("Invalid Move. Try Again.\n"); // Tell "Invalid move"
             continue;
         }
-        if (!play(size, table, player, row, column)) {
-            printf("Invalid Move. Try Again.\n");
+        if (!play(size, table, player, row, column))
+        {                                         // Is the square was already played
+            printf("Invalid Move. Try Again.\n"); // Tell "invalid move"
             continue;
         }
-        result = check_con(size, table);
-        player = player ^ 0b11; //Switch Player
+        result = check_con(size, table, winSize); // Check winner
+        player = player ^ 0b11;                   // Switch Player
     }
 
-    if(result != -1){
-        print_table(size, table);
-        printf("Player%d Wins!!!", result);
-    } else {
-        printf("Ties.");
+    if (result != -1)
+    {                                       // If not ties
+        print_table(size, table);           // Print final table
+        printf("Player%d Wins!!!", result); // Tell winner
+    }
+    else
+    {
+        printf("Ties."); // Tell ties
     }
     return 0;
 }
 
-void print_table (int size, int table[size][size]) {
-    for (int i = 0; i < size * 2 - 1; i++) {
-        for (int j = 0; j < size * 2 - 1; j++) {
-            if (i % 2 == 1) {
-                if (j % 2 == 1) {
+void print_table(int size, int table[size][size])
+{
+    for (int i = 0; i < size * 2 - 1; i++)
+    {
+        for (int j = 0; j < size * 2 - 1; j++)
+        {
+            if (i % 2 == 1)
+            {
+                if (j % 2 == 1)
+                {
                     printf("+");
                     continue;
                 }
                 printf("---");
                 continue;
             }
-            if (j % 2 == 1) {
+            if (j % 2 == 1)
+            {
                 printf("|");
-            } else {
-                switch (table[i/2][j/2])
+            }
+            else
+            {
+                switch (table[i / 2][j / 2])
                 {
                 case -1:
                     printf("   ");
@@ -70,7 +86,7 @@ void print_table (int size, int table[size][size]) {
                     printf(" O ");
                     break;
                 default:
-                    printf(" %d ", table[i/2][j/2]);
+                    printf(" %d ", table[i / 2][j / 2]);
                     break;
                 }
             }
@@ -79,98 +95,131 @@ void print_table (int size, int table[size][size]) {
     }
 }
 
-char check_con(int size, int table[size][size]) {
+char check_con(int size, int table[size][size], int winSize)
+{
     char result = 0;
     bool one_found = 0;
-    for (int i = 0; i < size; i++) { //Check every entries
-        for (int j = 0; j < size; j++) {
-            //printf("Checking %d,%d\n", i, j); //debug
-            if (table[i][j] == -1) {
+    for (int i = 0; i < size; i++)
+    { // Check every entries
+        for (int j = 0; j < size; j++)
+        {
+            // printf("Checking %d,%d\n", i, j); //debug
+            if (table[i][j] == -1)
+            {
                 one_found = 1;
                 continue;
             }
-            result = check_con_rc(size, table, i, j);
-            //printf("%d\n", (int)result); //debug
-            if (result != 0) return result;
+            result = check_con_rc(size, table, i, j, winSize);
+            // printf("%d\n", (int)result); //debug
+            if (result != 0)
+                return result;
         }
     }
-    if (!one_found) return -1;
+    if (!one_found)
+        return -1;
     return result;
 }
 
-char check_con_rc(int size, int table[size][size], int row, int col) {
+char check_con_rc(int size, int table[size][size], int row, int col, int winSize)
+{
     char player = table[row][col];
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++)
+    {
         int count = 0;
-        for (int j = 0; j < 3; j++) {
-            if (i % 2 == 0) { //Verticle and Horizontal Check
-                //debug
-                //printf("Checking %d,%d for player %d\n", row, col, player);
+        for (int j = 0; j < winSize; j++)
+        {
+            if (i % 2 == 0)
+            { // Verticle and Horizontal Check
+                // debug
+                // printf("Checking %d,%d for player %d\n", row, col, player);
                 int con = (i / 2) % 4;
                 switch (con)
                 {
                 case 0:
-                    if(!is_bound(row - j, col, size)) break;
-                    //printf("test"); //debug
-                    if(table[row - j][col] == player) count++; //Up
+                    if (!is_bound(row - j, col, size))
+                        break;
+                    // printf("test"); //debug
+                    if (table[row - j][col] == player)
+                        count++; // Up
                     break;
                 case 1:
-                    if(!is_bound(row, col + j, size)) break;
-                    if(table[row][col + j] == player) count++; //Right
+                    if (!is_bound(row, col + j, size))
+                        break;
+                    if (table[row][col + j] == player)
+                        count++; // Right
                     break;
                 case 2:
-                    if(!is_bound(row + j, col, size)) break;
-                    if(table[row + j][col] == player) count++; //Down
+                    if (!is_bound(row + j, col, size))
+                        break;
+                    if (table[row + j][col] == player)
+                        count++; // Down
                     break;
                 case 3:
-                    if(!is_bound(row, col - j, size)) break;
-                    if(table[row][col - j] == player) count++; //Left
+                    if (!is_bound(row, col - j, size))
+                        break;
+                    if (table[row][col - j] == player)
+                        count++; // Left
                     break;
                 default:
                     printf("Invalid case!!\n");
                     break;
                 }
-                if (count >= 3) return player;
-            } else { //Diagonal Check
+                if (count >= winSize)
+                    return player;
+            }
+            else
+            { // Diagonal Check
                 int con = (i / 2) % 4;
                 switch (con)
                 {
-                    case 0:
-                    if(!is_bound(row - j, col + j, size)) break;
-                    if(table[row - j][col  + j] == player) count++; //North-East
+                case 0:
+                    if (!is_bound(row - j, col + j, size))
+                        break;
+                    if (table[row - j][col + j] == player)
+                        count++; // North-East
                     break;
-                    case 1:
-                    if(!is_bound(row + j, col + j, size)) break;
-                    if(table[row + j][col + j] == player) count++; //South-East
+                case 1:
+                    if (!is_bound(row + j, col + j, size))
+                        break;
+                    if (table[row + j][col + j] == player)
+                        count++; // South-East
                     break;
-                    case 2:
-                    if(!is_bound(row + j, col - j, size)) break;
-                    if(table[row + j][col - j] == player) count++; //South-West
+                case 2:
+                    if (!is_bound(row + j, col - j, size))
+                        break;
+                    if (table[row + j][col - j] == player)
+                        count++; // South-West
                     break;
-                    case 3:
-                    if(!is_bound(row - j, col - j, size)) break;
-                    if(table[row - j][col - j] == player) count++; //North-West
+                case 3:
+                    if (!is_bound(row - j, col - j, size))
+                        break;
+                    if (table[row - j][col - j] == player)
+                        count++; // North-West
                     break;
                 default:
                     printf("Invalid case!!\n");
                     break;
                 }
-            if (count >= 3) return player;
+                if (count >= winSize)
+                    return player;
             }
         }
-        //printf("Count: %d\n", count); //debug
+        // printf("Count: %d\n", count); //debug
     }
     return 0;
 }
 
-bool is_bound (int row, int col, int n) {
+bool is_bound(int row, int col, int n)
+{
     return row < n && row >= 0 && col < n && col >= 0;
 }
 
-bool play (int size, int table[size][size], int player, int row, int col) {
-    //debug
-    //printf("Playing %d at %d,%d\n", player, row, col);
-    if (table[row][col] != -1) {
+bool play(int size, int table[size][size], int player, int row, int col)
+{
+    // debug
+    // printf("Playing %d at %d,%d\n", player, row, col);
+    if (table[row][col] != -1)
+    {
         return false;
     }
     table[row][col] = player;
