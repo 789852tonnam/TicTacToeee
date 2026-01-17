@@ -1,15 +1,9 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include "./scalableTicc.h"
 
-void print_table(int size, int table[size][size]);
-char check_con(int size, int table[size][size], int winSize);
-char check_con_rc(int size, int table[size][size], int row, int col, int winSize);
-bool is_bound(int row, int col, int n);
-bool play(int size, int table[size][size], int player, int row, int col);
-
-int main(void)
+int scalable_ticc(int size, int winSize)
 {
-    int size = 5, winSize = 4; // Initialize size and winSize
     int table[size][size];
     for (int i = 0; i < size; i++)
     { // Reset table
