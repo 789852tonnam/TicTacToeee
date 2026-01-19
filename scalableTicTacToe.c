@@ -18,8 +18,10 @@ int scalable_ticc(int size, int winSize)
     while (!result)
     {                                                          // While no one wins
         print_table(size, table);                              // Print table
-        printf("Player%d's turn\nEnter Row Column: ", player); // Tell Whose turn
+        printf("Player%d's turn\nEnter Row Column (1-%d): ", player, size); // Tell Whose turn
         scanf("%d%d", &row, &column);                          // Read input
+        row--;
+        column--;                                               // Adjust for 0 based index
         if (!is_bound(row, column, size))
         {                                         // Is not bound
             printf("Invalid Move. Try Again.\n"); // Tell "Invalid move"
