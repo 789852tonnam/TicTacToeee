@@ -2,6 +2,13 @@
 #include <stdbool.h>
 #include "./scalableTicc.h"
 
+int scalable_ticc(int size, int winSize);
+void print_table(int size, int table[size][size]);
+char check_con(int size, int table[size][size], int winSize);
+char check_con_rc(int size, int table[size][size], int row, int col, int winSize);
+bool is_bound(int row, int col, int n);
+bool play(int size, int table[size][size], int player, int row, int col);
+
 int scalable_ticc(int size, int winSize)
 {
     int table[size][size];

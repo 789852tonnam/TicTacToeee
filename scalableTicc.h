@@ -1,7 +1,7 @@
 #ifndef SCALABLE_TICC_H
 #define SCALABLE_TICC_H
-#include <stdbool.h>
 
+#include <stdbool.h>
 int scalable_ticc(int size, int winSize);
 void print_table(int size, int table[size][size]);
 char check_con(int size, int table[size][size], int winSize);

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "./scalableTicc.h"
+#include "./TTT3D.h"
 
 void game_control(int mode, int gameType) {
     // Placeholder for game control logic
@@ -13,12 +14,15 @@ void game_control(int mode, int gameType) {
             int size, winSize;
             printf("Enter board size: ");
             scanf("%d", &size);
-            printf("Enter win size: ");
-            scanf("%d", &winSize);
+            while (winSize > size || winSize < 1) {
+                printf("Enter win size: ");
+                scanf("%d", &winSize);
+            } 
             scalable_ticc(size, winSize);
         }
         break;
     case 3:
+        tic_tac_toe_3D();
         break;
     
     default:

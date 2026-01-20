@@ -1,8 +1,15 @@
 #include <stdio.h>
 #include "scalableTicc.h"
+#include "TTT3D.h"
 #include <stdbool.h>
 
-int main() {
+int simple_check_con(int size, int table[size][size]);
+int simple_check_3d_con(int size, int table[size][size][size]);
+void print_3d_table(int size, int table[size][size][size]);
+bool play_3d(int size, int table[size][size][size], int player, int z, int y, int x);
+int tic_tac_toe_3D();
+
+int tic_tac_toe_3D() {
     // Placeholder for 3D Tic Tac Toe game logic
     int size = 3;
     int table[size][size][size]; // 3D array
