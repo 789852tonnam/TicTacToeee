@@ -128,7 +128,7 @@ int simple_check_3d_con(int size, int table[size][size][size]) {
         int temp_table[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                temp_table[i][i] = table[i][i][j];
+                temp_table[i][j] = table[i][i][j];
             }
         }
         int result = simple_check_con(size, temp_table);
@@ -140,7 +140,7 @@ int simple_check_3d_con(int size, int table[size][size][size]) {
         int temp_table[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                temp_table[i][size - 1 - i] = table[i][i][j];
+                temp_table[i][size - 1 - j] = table[i][i][j];
             }
         }
         int result = simple_check_con(size, temp_table);
