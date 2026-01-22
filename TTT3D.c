@@ -2,14 +2,15 @@
 #include "scalableTicc.h"
 #include "TTT3D.h"
 #include <stdbool.h>
+#include <stdlib.h>
 
 int simple_check_con(int size, int table[size][size]);
 int simple_check_3d_con(int size, int table[size][size][size]);
 void print_3d_table(int size, int table[size][size][size]);
 bool play_3d(int size, int table[size][size][size], int player, int z, int y, int x);
-int tic_tac_toe_3D();
+int tic_tac_toe_3D(int mode);
 
-int tic_tac_toe_3D() {
+int tic_tac_toe_3D(int mode) {
     // Placeholder for 3D Tic Tac Toe game logic
     int size = 3;
     int table[size][size][size]; // 3D array
@@ -25,17 +26,29 @@ int tic_tac_toe_3D() {
     }
 
     while(!result) {
-        print_3d_table(size, table);
-        int z, y, x;
-        printf("Player %d's turn. Enter level (1-%d), row (1-%d), column (1-%d): ", current_player, size, size, size);
-        scanf("%d %d %d", &z, &y, &x);
-        z--; y--; x--; // Adjust for 0-based index
-        
-        if(play_3d(size, table, current_player, z, y, x)) {
-            result = simple_check_3d_con(size, table);
-            if(result == 0) {
-                current_player = current_player ^ 0b11; // Switch player
-            }
+        if(mode == 2 && current_player == 2) {
+            // Bot's turn
+            int z, y, x;
+            do {
+                z = rand() % size;
+                y = rand() % size;
+                x = rand() % size;
+            } while(!play_3d(size, table, current_player, z, y, x));
+        } else {
+            print_3d_table(size, table);
+            int z, y, x;
+            printf("Player %d's turn. Enter level (1-%d), row (1-%d), column (1-%d): ", current_player, size, size, size);
+            scanf("%d %d %d", &z, &y, &x);
+            z--; y--; x--; // Adjust for 0-based index
+            
+            if(!play_3d(size, table, current_player, z, y, x)) {
+                printf("Invalid move! Try again.\n");
+                continue; // Invalid move, try again
+            }           
+        }
+        result = simple_check_3d_con(size, table);
+        if(result == 0) {
+            current_player = current_player ^ 0b11; // Switch player
         }
     }
 
@@ -177,14 +190,11 @@ void print_3d_table(int size, int table[size][size][size]) {
 }
 
 bool play_3d(int size, int table[size][size][size], int player, int z, int y, int x) {
-    if (table[z][y][x] == -1) {
+    if(z < 0 || z >= size || y < 0 || y >= size || x < 0 || x >= size) {
+        return false;
+    } else if (table[z][y][x] == -1) {
         table[z][y][x] = player;
         return true;
-    } else if(z < 0 || z >= size || y < 0 || y >= size || x < 0 || x >= size) {
-        printf("Invalid move! Try again.\n");
-        return false;
-    } else {
-        printf("Cell already occupied! Try again.\n");
-        return false;
     }
+    return false;
 }

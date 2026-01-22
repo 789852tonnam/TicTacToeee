@@ -7,7 +7,7 @@ void game_control(int mode, int gameType) {
     switch (gameType)
     {
     case 1:
-        scalable_ticc(3, 3);
+        scalable_ticc(3, 3, mode);
         break;
     case 2:
         {
@@ -18,11 +18,11 @@ void game_control(int mode, int gameType) {
                 printf("Enter win size: ");
                 scanf("%d", &winSize);
             } 
-            scalable_ticc(size, winSize);
+            scalable_ticc(size, winSize, mode);
         }
         break;
     case 3:
-        tic_tac_toe_3D();
+        tic_tac_toe_3D(mode);
         break;
     
     default:

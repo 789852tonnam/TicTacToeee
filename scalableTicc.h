@@ -2,7 +2,7 @@
 #define SCALABLE_TICC_H
 
 #include <stdbool.h>
-int scalable_ticc(int size, int winSize);
+int scalable_ticc(int size, int winSize, int mode);
 void print_table(int size, int table[size][size]);
 char check_con(int size, int table[size][size], int winSize);
 char check_con_rc(int size, int table[size][size], int row, int col, int winSize);

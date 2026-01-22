@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include "./scalableTicc.h"
 
-int scalable_ticc(int size, int winSize);
+int scalable_ticc(int size, int winSize, int mode);
 void print_table(int size, int table[size][size]);
 char check_con(int size, int table[size][size], int winSize);
 char check_con_rc(int size, int table[size][size], int row, int col, int winSize);
 bool is_bound(int row, int col, int n);
 bool play(int size, int table[size][size], int player, int row, int col);
 
-int scalable_ticc(int size, int winSize)
+int scalable_ticc(int size, int winSize, int mode)
 {
     int table[size][size];
     for (int i = 0; i < size; i++)
@@ -24,23 +25,31 @@ int scalable_ticc(int size, int winSize)
 
     while (!result)
     {                                                          // While no one wins
-        print_table(size, table);                              // Print table
-        printf("Player%d's turn\nEnter Row Column (1-%d): ", player, size); // Tell Whose turn
-        scanf("%d%d", &row, &column);                          // Read input
-        row--;
-        column--;                                               // Adjust for 0 based index
-        if (!is_bound(row, column, size))
-        {                                         // Is not bound
-            printf("Invalid Move. Try Again.\n"); // Tell "Invalid move"
-            continue;
-        }
-        if (!play(size, table, player, row, column))
-        {                                         // Is the square was already played
-            printf("Invalid Move. Try Again.\n"); // Tell "invalid move"
-            continue;
-        }
+        if(mode == 2 && player == 2){                           // Bot Mode and Bot's turn
+            // Simple Bot: Random Move
+            do{
+                row = rand() % size;
+                column = rand() % size;
+            }while(!play(size, table, player, row, column)); // Try until valid move
+        }else{
+            print_table(size, table);                              // Print table
+            printf("Player%d's turn\nEnter Row Column (1-%d): ", player, size); // Tell Whose turn
+            scanf("%d%d", &row, &column);                          // Read input
+            row--;
+            column--;                                               // Adjust for 0 based index
+            if (!is_bound(row, column, size))
+            {                                         // Is not bound
+                printf("Invalid Move. Try Again.\n"); // Tell "Invalid move"
+                continue;
+            }
+            if (!play(size, table, player, row, column))
+            {                                         // Is the square was already played
+                printf("Invalid Move. Try Again.\n"); // Tell "invalid move"
+                continue;
+            }
+        }                   
         result = check_con(size, table, winSize); // Check winner
-        player = player ^ 0b11;                   // Switch Player
+        player = player ^ 0b11;// Switch Player
     }
 
     if (result != -1)
